@@ -21,7 +21,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: factorial
-          image: jheo/factorial-cache-app:0.0.1
+          image: jheo/factorial-cache-app:0.0.2
           imagePullPolicy: Always
           env:
             - name: APP_LANGUAGE

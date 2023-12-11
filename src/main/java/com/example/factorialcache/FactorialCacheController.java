@@ -17,6 +17,14 @@ public class FactorialCacheController {
     @Value("${factorial.api-key}")
     private String apiKey;
 
+    private FactorialCacheService cacheService;
+    private FactorialCalculateService calculateService;
+
+    public FactorialCacheController(FactorialCacheService cacheService, FactorialCalculateService calculateService) {
+        this.cacheService = cacheService;
+        this.calculateService = calculateService;
+    }
+
     @GetMapping("/factorial/{n}")
     public String calculateFactorial(@PathVariable("n") int n, @RequestParam(value = "key", required = false) String key) {
         if (n>10) {
@@ -25,7 +33,15 @@ public class FactorialCacheController {
             }
         }
 
-        BigDecimal result = BigDecimal.ONE;
+        BigDecimal result;
+        BigDecimal cachedResult = cacheService.cachedFactorial(n);
+
+        if (cachedResult!=null) {
+            result = cachedResult;
+        } else {
+            result = calculateService.getCalculatedResult(n);
+            cacheService.cacheFactorial(n, result);
+        }
 
         return switch (language) {
             case "ko" -> n + " 팩토리얼은 " + result + " 입니다";
