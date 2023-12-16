@@ -19,10 +19,22 @@ spec:
         app: factorial-cache-app
     spec:
       terminationGracePeriodSeconds: 60
+      volumes:
+        - name: cache-volume
+          emptyDir:
+            medium: Memory
+        - name: log-volume
+          persistentVolumeClaim:
+            claimName: cache-log-storage-claim
       containers:
         - name: factorial
-          image: jheo/factorial-cache-app:0.0.2
+          image: jheo/factorial-cache-app:0.0.3
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /factorial/logs
+              name: log-volume
+            - mountPath: /factorial/cache
+              name: cache-volume
           env:
             - name: APP_LANGUAGE
               valueFrom:
