@@ -28,7 +28,7 @@ spec:
             claimName: cache-log-storage-claim
       containers:
         - name: factorial
-          image: jheo/factorial-cache-app:0.0.3
+          image: jheo/factorial-cache-app:0.0.6
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: /factorial/logs

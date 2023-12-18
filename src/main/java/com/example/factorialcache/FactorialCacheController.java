@@ -19,10 +19,12 @@ public class FactorialCacheController {
 
     private FactorialCacheService cacheService;
     private FactorialCalculateService calculateService;
+    private FactorialTaskService taskService;
 
-    public FactorialCacheController(FactorialCacheService cacheService, FactorialCalculateService calculateService) {
+    public FactorialCacheController(FactorialCacheService cacheService, FactorialCalculateService calculateService, FactorialTaskService taskService) {
         this.cacheService = cacheService;
         this.calculateService = calculateService;
+        this.taskService = taskService;
     }
 
     @GetMapping("/factorial/{n}")
@@ -39,6 +41,14 @@ public class FactorialCacheController {
         if (cachedResult!=null) {
             result = cachedResult;
         } else {
+            if (n>1000) {
+                long size = taskService.saveCalculationTask(n);
+                return switch (language) {
+                    case "ko" -> n + "! 계산이 예약되었습니다. 남은 작업 : " + size;
+                    case "en" -> n + "! has been scheduled. Remain task : " + size;
+                    default -> "Unsupported Language";
+                };
+            }
             result = calculateService.getCalculatedResult(n);
             cacheService.cacheFactorial(n, result);
         }
